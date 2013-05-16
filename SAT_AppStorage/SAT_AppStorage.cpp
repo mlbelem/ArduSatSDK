@@ -2,19 +2,18 @@
     SAT_AppStorage.cpp - Library to write arduino application data from arduino->supervisor.
     Copyright (C) 2013 Jorge Ortiz for NanoSatisfi
 
-   Copyright 2013 NanoSatisfi, Inc.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
 */
 
@@ -56,10 +55,11 @@ SAT_AppStorage::SAT_AppStorage(uint8_t id){
 void SAT_AppStorage::store_exp_data(SAT_ExperimentData* edata){
     if(edata!=NULL){
         exp_data_t* data = edata->get_exp_data();
-        message_t msg;
-        msg.t = APPEND;
+        nanosat_message_t msg;
+        msg.type = APPEND;
         msg.node_addr = _local_address;
-        nano_datamsg_t* datamsg = (nano_datamsg_t*)&msg.data;
+        msg.len = sizeof(nanosat_datamsg_t);
+        nanosat_datamsg_t* datamsg = (nanosat_datamsg_t*)&msg.data;
         datamsg->len = sizeof(exp_data_t);
         memcpy(datamsg->buf, data, sizeof(exp_data_t));
         commLayer->send(&msg, I2C_ADD_SUPERVISOR);
@@ -72,10 +72,11 @@ void SAT_AppStorage::store_exp_data(SAT_ExperimentData* edata){
 */
 void SAT_AppStorage::store_exp_data(const uint8_t* buf, size_t len){
     if(buf!=NULL){
-        message_t msg;
-        msg.t = APPEND;
+        nanosat_message_t msg;
+        msg.type = APPEND;
         msg.node_addr = _local_address;
-        nano_datamsg_t* datamsg = (nano_datamsg_t*)&msg.data;
+        msg.len = sizeof(nanosat_datamsg_t);
+        nanosat_datamsg_t* datamsg = (nanosat_datamsg_t*)&msg.data;
         datamsg->len = len;
         memcpy(datamsg->buf, buf, len);
         commLayer->send(&msg, I2C_ADD_SUPERVISOR);

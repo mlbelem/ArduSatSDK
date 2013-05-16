@@ -1,7 +1,10 @@
 
 #include <Wire.h>
 #include <nanosat_message.h>
+#include <I2C_add.h>
+#include <OnboardCommLayer.h>
 #include <SAT_AppStorage.h>
+#include <SAT_ExperimentData.h>
 
 #define MAX_READINGS 10
 
@@ -9,7 +12,7 @@ int led = 13;
 boolean setting = true;
 
 int addr = 1;
-SAT_AppStorage appStorage(addr);
+SAT_AppStorage appStorage= SAT_AppStorage(addr);
 
 byte readings[MAX_READINGS];
 uint8_t cnt = 0;
@@ -29,7 +32,7 @@ void loop(){
    random_temp = (uint8_t)rand()%10+10;
  }
  if(cnt==MAX_READINGS){
-   appStorage.sys_appdata_write(&readings[0], MAX_READINGS);
+   appStorage.store_exp_data(&readings[0], MAX_READINGS);
    cnt=0;
  }
  delay(200);
@@ -42,5 +45,4 @@ void requestHdlr(){
   else
     digitalWrite(led, LOW);
   setting = !setting;
-  appStorage.onReceive();
 }
